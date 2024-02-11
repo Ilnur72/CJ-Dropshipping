@@ -1,10 +1,10 @@
-import { ProductModule } from './modules/product/product.module';
 import { Module } from '@nestjs/common';
-import { AuthModule } from './modules/auth/auth.module';
 import { CoreModule } from './shared/core/core.modules';
 import { HttpModule } from '@nestjs/axios';
+import { ConsumerModule } from './modules/cjdropshipping/consumer/consumer.module';
+import { CjdropshippingModule } from './modules/cjdropshipping/cjdropshipping.module';
 
 @Module({
-  imports: [ProductModule, CoreModule, AuthModule, HttpModule],
+  imports: [CjdropshippingModule, CoreModule, HttpModule, ConsumerModule],
 })
 export class AppModule {}

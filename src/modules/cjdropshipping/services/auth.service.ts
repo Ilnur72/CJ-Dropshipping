@@ -2,26 +2,21 @@ import { HttpService } from '@nestjs/axios';
 import {
   BadGatewayException,
   Injectable,
-  OnModuleInit,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { Knex } from 'knex';
 import { InjectModel } from 'nest-knexjs';
 import { IAdminConfig } from 'src/shared/config';
 
 @Injectable()
-export class AuthService implements OnModuleInit {
+export class AuthService {
   constructor(
     @InjectModel() private readonly knex: Knex,
     private httpService: HttpService,
     private configService: ConfigService,
   ) {}
-
-  async onModuleInit() {
-    // await this.getAccessToken();  
-    // await this.refreshAccessToken();
-  }
 
   async getAccessToken() {
     const existing = await this.knex.table('session').first();
@@ -33,8 +28,11 @@ export class AuthService implements OnModuleInit {
 
     const responce = await this.httpService.post(url, data).toPromise();
     await this.knex.table('session').insert(responce.data.data);
+    console.log(responce);
+    
   }
 
+  @Cron(CronExpression.EVERY_WEEK)
   async refreshAccessToken() {
     const { openId, refreshToken } = await this.knex.table('session').first();
     const url =

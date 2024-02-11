@@ -1,14 +1,14 @@
 import { NestFactory } from '@nestjs/core';
+import { TypesenseService } from './services/typesense.service';
 import { AppModule } from '../../app.module';
-import { ProductService } from './product.service';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
-  const productService = app.get(ProductService);
+  const typesenseService = app.get(TypesenseService);
 
   try {
-    const products = await productService.getCategory();
-    console.log(products);
+    const product = await typesenseService.sendProduct();
+    console.log(product);
   } catch (error) {
     console.error(error);
   } finally {

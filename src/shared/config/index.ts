@@ -2,6 +2,7 @@ export interface IConfig {
   port: number;
   db: IDatabaseConfig;
   admin: IAdminConfig;
+  rabbitOption: IRabbitMQConfig;
 }
 
 export interface IDatabaseConfig {
@@ -17,6 +18,13 @@ export interface IAdminConfig {
   password: string;
 }
 
+export interface IRabbitMQConfig {
+  urls: string[];
+  queue: string;
+  noAck: boolean;
+  // prefetchCount: number;
+}
+
 export default (): IConfig => ({
   port: parseInt(process.env.PORT, 10),
   db: {
@@ -29,5 +37,10 @@ export default (): IConfig => ({
   admin: {
     email: process.env.ADMIN_EMAIL,
     password: process.env.ADMIN_PASSWORD,
+  },
+  rabbitOption: {
+    urls: [`amqp://${process.env.MQ_HOST}:${process.env.MQ_PORT}`],
+    queue: 'cjdropshipping_queue',
+    noAck: false,
   },
 });
