@@ -1,38 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Knex } from 'knex';
 import { InjectModel } from 'nest-knexjs';
+import slugify from 'slugify';
 
 @Injectable()
 export class ConsumerService {
   constructor(@InjectModel() private readonly knex: Knex) {}
-
-  // async saveCategory(categoryData): Promise<void> {
-  //   try {
-  //     for (const categoryFirst of categoryData) {
-  //       await this.knex.table('category').insert({
-  //         categoryId: categoryFirst.categoryFirstId,
-  //         categoryName: categoryFirst.categoryFirstName,
-  //       });
-  //       for (const categorySecond of categoryFirst.categoryFirstList) {
-  //         await this.knex.table('category').insert({
-  //           categoryId: categorySecond.categorySecondId,
-  //           categoryName: categorySecond.categorySecondName,
-  //           parentId: categoryFirst.categoryFirstId,
-  //         });
-  //         for (const category of categorySecond.categorySecondList) {
-  //           await this.knex.table('category').insert({
-  //             categoryId: category.categoryId,
-  //             categoryName: category.categoryName,
-  //             parentId: categorySecond.categorySecondId,
-  //           });
-  //         }
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
   async saveProducts({ productData, comments }) {
     try {
       const productClone = { ...productData };
@@ -41,12 +14,13 @@ export class ConsumerService {
       await this.knex.table('product').insert({
         ...productClone,
         dropshippingProvider: 'CJDropshipping',
+        slug: slugify(productClone.productNameEn),
         createTime: new Date(productClone.createTime).toISOString(),
       });
 
-      if (comments.list) {
-        for (const comment of comments.list) {
-          await this.knex.table('comment').insert(comment);
+      if (comments.data.list) {
+        for (const comment of comments.data.list) {
+          await this.knex.table('comments').insert(comment);
         }
       }
 

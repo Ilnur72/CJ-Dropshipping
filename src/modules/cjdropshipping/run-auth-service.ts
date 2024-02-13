@@ -7,7 +7,8 @@ async function bootstrap() {
   const authService = app.get(AuthService);
 
   try {
-    await authService.getAccessToken();
+    const result = await authService.getAccessToken();
+    console.log(result);
   } catch (error) {
     console.error(error);
   } finally {

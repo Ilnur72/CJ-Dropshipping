@@ -3,12 +3,12 @@
  * @returns { Promise<void> }
  */
 exports.up = async function (knex) {
-  await knex.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
-  return knex.schema.createTable('comment', function (table) {
-    table.uuid('commentId').defaultTo(knex.raw('uuid_generate_v4()')).primary();
-    table.string('pid').unique().references('pid').inTable('product');
+  return knex.schema.createTable('comments', function (table) {
+    table.string('commentId').unique().primary();
+    table.string('pid').references('pid').inTable('product');
+    table.text('comment');
     table.date('commentDate');
-    table.string('commentuser');
+    table.string('commentUser');
     table.integer('score');
     table.specificType('commentUrls', 'TEXT[]');
     table.string('countryCode');
@@ -20,4 +20,6 @@ exports.up = async function (knex) {
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function (knex) {};
+exports.down = function (knex) {
+  return knex.schema.dropTable('comments');
+};

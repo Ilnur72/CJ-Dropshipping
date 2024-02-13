@@ -2,10 +2,13 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = function (knex) {
+exports.up = async function (knex) {
+  await knex.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
   return knex.schema.createTable('product', function (table) {
+    table.uuid('id').defaultTo(knex.raw('uuid_generate_v4()')).primary();
     table.string('pid').primary().unique();
     table.string('dropshippingProvider').notNullable();
+    table.string('slug').notNullable();
     table.string('productNameEn');
     table.string('productSku');
     table.text('productImage');

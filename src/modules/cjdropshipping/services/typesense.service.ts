@@ -25,12 +25,18 @@ export class TypesenseService {
             'product.*',
             this.knex.raw('JSON_AGG(variants.*) as variants'),
           )
-          .groupBy('product.pid')
+          .groupBy('product.id')
           .limit(100)
           .offset((limit - 1) * 100);
+        console.log(limit);
 
         for (const product of data) {
-          await this.client.send('typesense', product).toPromise();
+          const comments = await this.knex
+            .table('comments')
+            .where({ pid: 'product.pid' });
+          await this.client
+            .send('typesense', { product, comments })
+            .toPromise();
         }
       }
       return 'successfully';

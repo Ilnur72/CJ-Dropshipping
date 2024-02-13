@@ -45,7 +45,7 @@ export class DropshippingService {
           }
         }
       }
-      return 'Successfully';
+      return 'Categories were successfully added.';
     } catch (error) {
       if (error.response?.status === 401) {
         await this.authService.refreshAccessToken();
@@ -55,15 +55,16 @@ export class DropshippingService {
     }
   }
 
-  async getCa() {
+  async listProdduct() {
     try {
       const data = this.knex.table('product');
       const total = await data.clone().count().first();
       const products = await data
         .leftJoin('variants', 'product.pid', 'variants.pid')
         .select('product.*', this.knex.raw('JSON_AGG(variants.*) as variants'))
-        .groupBy('product.pid');
+        .groupBy('product.id');
 
+      // const products = await data
       return { total: total.count, products };
     } catch (error) {
       console.log(error);
@@ -82,7 +83,7 @@ export class DropshippingService {
       //   .get(url, { headers: { 'CJ-Access-Token': accessToken } })
       //   .toPromise();
       // const totalRequest = Math.ceil(data.total / data.pageSize);
-      for (let page = 1; page <= 100; page++) {
+      for (let page = 1; page <= 10; page++) {
         await delay(5000);
         const {
           data: { data },
@@ -95,7 +96,7 @@ export class DropshippingService {
         console.log(page);
         await this.getDetails(data.list);
       }
-      return 'Successfully';
+      return 'Products were successfully added.';
     } catch (error) {
       if (error.response?.status === 401) {
         await this.authService.refreshAccessToken();
@@ -108,9 +109,7 @@ export class DropshippingService {
   async getDetails(productList): Promise<void> {
     try {
       const { accessToken } = await this.knex.table('session').first();
-      // const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       for (const product of productList) {
-        // await delay(300);
         const { data: details } = await this.httpService
           .get(
             'https://developers.cjdropshipping.com/api2.0/v1/product/query',
@@ -175,7 +174,7 @@ export class DropshippingService {
         .toPromise();
 
       const newOrder = await this.knex
-        .table('order')
+        .table('orders')
         .insert(orderData)
         .returning('*');
       console.log(data);

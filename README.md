@@ -44,8 +44,14 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 
+# authorization
+$ npm run start:auth
+
 # get products
-$ npm run start:product
+$ npm run start:pro
+
+# sending to typesense
+$ npm run start:typesense
 ```
 
 ## Test

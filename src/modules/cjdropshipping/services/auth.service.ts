@@ -26,10 +26,9 @@ export class AuthService {
       'https://developers.cjdropshipping.com/api2.0/v1/authentication/getAccessToken';
     const data = this.configService.get<IAdminConfig>('admin');
 
-    const responce = await this.httpService.post(url, data).toPromise();
-    await this.knex.table('session').insert(responce.data.data);
-    console.log(responce);
-    
+    const response = await this.httpService.post(url, data).toPromise();
+    await this.knex.table('session').insert(response.data.data);
+    return response.data.message;
   }
 
   @Cron(CronExpression.EVERY_WEEK)
@@ -47,6 +46,8 @@ export class AuthService {
       .table('session')
       .where({ openId: openId })
       .update(response.data.data);
+
+    return response.data.message;
   }
 
   async logout() {

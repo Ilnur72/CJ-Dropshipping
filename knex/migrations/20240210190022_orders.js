@@ -4,7 +4,7 @@
  */
 exports.up = async function (knex) {
   await knex.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
-  return knex.schema.createTable('order', function (table) {
+  return knex.schema.createTable('orders', function (table) {
     table.uuid('commentId').defaultTo(knex.raw('uuid_generate_v4()')).primary();
     table.string('orderNumber').notNullable();
     table.string('shippingZip');
@@ -28,4 +28,6 @@ exports.up = async function (knex) {
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function (knex) {};
+exports.down = function (knex) {
+  return knex.schema.dropTable('orders');
+};
